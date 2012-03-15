@@ -1,0 +1,14 @@
+{
+  "name": "stathat",
+  "description": "stathat.com API library",
+  "version": "0.0.1",
+  "homepage": "http://www.stathat.com",
+  "repository": {
+    "url": ""
+  },
+  "author": "Patrick Crosby <patrick@stathat.com>",
+  "main": "./main",
+  "engines": {
+    "node": "*"
+  }
+}
