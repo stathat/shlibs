@@ -2,6 +2,7 @@
 //
 // StatHat API node.js module
 //
+(function() {
 
 var http = require('http');
 
@@ -23,11 +24,18 @@ var StatHat = {
         },
 
         _postRequest: function(path, params, callback) {
+                var qs = Object.keys(params)
+                               .map( function(k) { return k + '=' + params[k] } )
+                               .join('&');
+
                 var options = {
-                        host: 'api.stathat.com',
-                        port: 80,
+                        hostname: 'api.stathat.com',
                         path: path,
-                        method: 'POST'
+                        method: 'POST',
+                        headers: {
+                          'Content-Type'   : 'application/x-www-form-urlencoded',
+                          'Content-Length' : qs.length
+                        }
                 };
 
                 var request = http.request(options, function(res) {
@@ -35,14 +43,12 @@ var StatHat = {
                                 callback(res.statusCode, chunk);
                         });
                 });
+                request.write(qs);
 
-                var key;
-                for (key in params) {
-                        request.write(key + "=" + params[key] + "\n");
-                }
                 request.end();
         },
 };
 
 module.exports = StatHat;
 
+}())
