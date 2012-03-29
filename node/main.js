@@ -43,6 +43,13 @@ var StatHat = {
                                 callback(res.statusCode, chunk);
                         });
                 });
+
+                request.on('error', function(e) {
+                        if (!e) e = {};
+                        //console.error("StatHat HTTP error: "+e.message);
+                        callback(600,e.message);
+                });
+                
                 request.write(qs);
 
                 request.end();
