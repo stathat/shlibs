@@ -6,19 +6,19 @@
 
 (defun stathat-post (path parameters)
   "HTTP post request helper"
-  (http-request (format "http://api.stathat.com/~A" path) 
+  (http-request (format "http://api.stathat.com/~A" path)
                 :method :post
                 :parameters parameters))
 
-(defun stathat-ez-value (email stat value)
+(defun stathat-ez-value (ezkey stat value)
   "Sends a value to stathat via the EZ API"
-  (stathat-post "ez" '(("email" . email)
+  (stathat-post "ez" '(("ezkey" . ezkey)
                        ("stat" . stat)
                        ("value" . value))))
 
-(defun stathat-ez-count (email stat ncount)
+(defun stathat-ez-count (ezkey stat ncount)
   "Sends a count to stathat via the EZ API"
-  (stathat-post "ez" '(("email" . email)
+  (stathat-post "ez" '(("ezkey" . ezkey)
                        ("stat" . stat)
                        ("count" . ncount))))
 

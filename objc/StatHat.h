@@ -18,8 +18,8 @@
 @property (nonatomic, assign) id<StatHatDelegate> delegate;
 
 // EZ API class convenience methods
-+ (StatHat*)postEZStat:(NSString*)statName withValue:(double)value forUser:(NSString*)email delegate:(id<StatHatDelegate>)delegate;
-+ (StatHat*)postEZStat:(NSString*)statName withCount:(double)count forUser:(NSString*)email delegate:(id<StatHatDelegate>)delegate;
++ (StatHat*)postEZStat:(NSString*)statName withValue:(double)value forUser:(NSString*)ezkey delegate:(id<StatHatDelegate>)delegate;
++ (StatHat*)postEZStat:(NSString*)statName withCount:(double)count forUser:(NSString*)ezkey delegate:(id<StatHatDelegate>)delegate;
 
 // Classic API class convenience methods
 + (StatHat*)postStatKey:(NSString*)statKey withValue:(double)value forUser:(NSString*)userKey delegate:(id<StatHatDelegate>)delegate;
@@ -28,8 +28,8 @@
 - (id)init;
 
 // EZ API instance methods
-- (void)ezPostStat:(NSString*)statName withValue:(double)value forUser:(NSString*)email;
-- (void)ezPostStat:(NSString*)statName withCount:(double)count forUser:(NSString*)email;
+- (void)ezPostStat:(NSString*)statName withValue:(double)value forUser:(NSString*)ezkey;
+- (void)ezPostStat:(NSString*)statName withCount:(double)count forUser:(NSString*)ezkey;
 
 // Classic API instance methods
 - (void)postStatKey:(NSString*)statKey withValue:(double)value forUserKey:(NSString*)userKey;

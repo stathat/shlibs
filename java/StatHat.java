@@ -23,7 +23,7 @@ class StatHat {
                         }
                         wr.close();
                         rd.close();
-                } 
+                }
                 catch (Exception e) {
                         System.err.println(e);
                 }
@@ -40,7 +40,7 @@ class StatHat {
                         System.err.println("postValue exception:  " + e);
                 }
         }
-        
+
         public static void postCount(String userKey, String statKey, Double count) {
                 try {
                         String data = URLEncoder.encode("ukey", "UTF-8") + "=" + URLEncoder.encode(userKey, "UTF-8");
@@ -52,10 +52,10 @@ class StatHat {
                         System.err.println("postCount exception:  " + e);
                 }
         }
-        
-        public static void ezPostValue(String email, String statName, Double value) {
+
+        public static void ezPostValue(String ezkey, String statName, Double value) {
                 try {
-                        String data = URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(email, "UTF-8");
+                        String data = URLEncoder.encode("ezkey", "UTF-8") + "=" + URLEncoder.encode(ezkey, "UTF-8");
                         data += "&" + URLEncoder.encode("stat", "UTF-8") + "=" + URLEncoder.encode(statName, "UTF-8");
                         data += "&" + URLEncoder.encode("value", "UTF-8") + "=" + URLEncoder.encode(value.toString(), "UTF-8");
                         httpPost("http://api.stathat.com/ez", data);
@@ -64,10 +64,10 @@ class StatHat {
                         System.err.println("ezPostValue exception:  " + e);
                 }
         }
-        
-        public static void ezPostCount(String email, String statName, Double count) {
+
+        public static void ezPostCount(String ezkey, String statName, Double count) {
                 try {
-                        String data = URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(email, "UTF-8");
+                        String data = URLEncoder.encode("ezkey", "UTF-8") + "=" + URLEncoder.encode(ezkey, "UTF-8");
                         data += "&" + URLEncoder.encode("stat", "UTF-8") + "=" + URLEncoder.encode(statName, "UTF-8");
                         data += "&" + URLEncoder.encode("count", "UTF-8") + "=" + URLEncoder.encode(count.toString(), "UTF-8");
                         httpPost("http://api.stathat.com/ez", data);

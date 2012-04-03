@@ -10,36 +10,36 @@
 @interface StatHat (Private)
 - (void)httpPostDict:(NSDictionary*)params toPath:(NSString*)path;
 - (void)releaseConnection;
-- (NSMutableDictionary*)makeEZParamsForStat:(NSString*) statName user:(NSString*)email;
+- (NSMutableDictionary*)makeEZParamsForStat:(NSString*) statName user:(NSString*)ezkey;
 - (NSMutableDictionary*)makeClassicParamsForStat:(NSString*) statKey user:(NSString*)userKey;
 @end
 
 @implementation StatHat
 
-// 
+//
 // EZ API class convenience methods
 //
 
-+ (StatHat*)postEZStat:(NSString*)statName withValue:(double)value forUser:(NSString*)email delegate:(id<StatHatDelegate>)delegate
++ (StatHat*)postEZStat:(NSString*)statName withValue:(double)value forUser:(NSString*)ezkey delegate:(id<StatHatDelegate>)delegate
 {
         StatHat* sh = [[[StatHat alloc] init] autorelease];
         sh.delegate = delegate;
-        
-        [sh ezPostStat:statName withValue:value forUser:email];
+
+        [sh ezPostStat:statName withValue:value forUser:ezkey];
         return sh;
 }
 
-+ (StatHat*)postEZStat:(NSString*)statName withCount:(double)count forUser:(NSString*)email delegate:(id<StatHatDelegate>)delegate
++ (StatHat*)postEZStat:(NSString*)statName withCount:(double)count forUser:(NSString*)ezkey delegate:(id<StatHatDelegate>)delegate
 {
         StatHat* sh = [[[StatHat alloc] init] autorelease];
         sh.delegate = delegate;
-       
-        [sh ezPostStat:statName withCount:count forUser:email];
-        
+
+        [sh ezPostStat:statName withCount:count forUser:ezkey];
+
         return sh;
 }
 
-// 
+//
 // Classic API class convenience methods
 //
 
@@ -57,7 +57,7 @@
         sh.delegate = delegate;
 
         [sh postStatKey:statKey withCount:count forUserKey:userKey];
-       
+
         return sh;
 }
 
@@ -78,16 +78,16 @@
         return self;
 }
 
-- (void)ezPostStat:(NSString*)statName withValue:(double)value forUser:(NSString*)email
+- (void)ezPostStat:(NSString*)statName withValue:(double)value forUser:(NSString*)ezkey
 {
-        NSMutableDictionary* params = [self makeEZParamsForStat:statName user:email];
+        NSMutableDictionary* params = [self makeEZParamsForStat:statName user:ezkey];
         [params setObject:[NSNumber numberWithDouble:value] forKey:@"value"];
         [self httpPostDict:params toPath:@"ez"];
 }
 
-- (void)ezPostStat:(NSString*)statName withCount:(double)count forUser:(NSString*)email
+- (void)ezPostStat:(NSString*)statName withCount:(double)count forUser:(NSString*)ezkey
 {
-        NSMutableDictionary* params = [self makeEZParamsForStat:statName user:email];
+        NSMutableDictionary* params = [self makeEZParamsForStat:statName user:ezkey];
         [params setObject:[NSNumber numberWithDouble:count] forKey:@"count"];
         [self httpPostDict:params toPath:@"ez"];
 }
@@ -108,7 +108,7 @@
 
 //
 // NSURLConnection delegate methods
-// 
+//
 
 - (void)connection:(NSURLConnection*)connection didReceiveData:(NSData*)data
 {
@@ -150,7 +150,7 @@
 
 @end
 
-// 
+//
 // Private methods
 //
 @implementation StatHat (Private)
@@ -174,10 +174,10 @@
 }
 
 
-- (NSMutableDictionary*)makeEZParamsForStat:(NSString*) statName user:(NSString*)email
+- (NSMutableDictionary*)makeEZParamsForStat:(NSString*) statName user:(NSString*)ezkey
 {
         NSMutableDictionary* params = [NSMutableDictionary dictionary];
-        [params setObject:email forKey:@"email"];
+        [params setObject:ezkey forKey:@"ezkey"];
         [params setObject:statName forKey:@"stat"];
         return params;
 }

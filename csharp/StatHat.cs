@@ -43,7 +43,7 @@ namespace StatHat
         // If you care to read what the server is replying to your call (for error handling, curiosity, etc.)
         // you can pass a delegate function expecting a string for callback. Like so:
         //
-        // 
+        //
         //    // Here's some function I want StatHat to call with the reply:
         //    // ---------------------------------------------------
         //    void PrintStatHatReply(string reply) { Console.WriteLine(reply); }
@@ -115,13 +115,13 @@ namespace StatHat
         /// <summary>
         /// Posts a counter increment to stathat over HTTP using ez API - the stat and/or you don't have to be pre-registered
         /// </summary>
-        /// <param name="email">your email address (if you already have a stathat account, use the one associated with it)</param>
+        /// <param name="ezkey">your ezkey (defaults to email address).  If you already have a stathat account, use the one associated with it.</param>
         /// <param name="stat">the name for your stat</param>
         /// <param name="count">the number to increment</param>
-        public static void EzCounter(string email, string stat, float count)
+        public static void EzCounter(string ezkey, string stat, float count)
         {
             Dictionary<string, string> p = new Dictionary<string, string>();
-            p.Add("email", email);
+            p.Add("ezkey", ezkey);
             p.Add("stat", stat);
             p.Add("count", count.ToString());
             new FormPoster(Post.BaseUrl, "/ez", p);
@@ -130,24 +130,24 @@ namespace StatHat
         /// <summary>
         /// Posts a counter increment to stathat over HTTP using ez API - the stat and/or you don't have to be pre-registered
         /// </summary>
-        /// <param name="email">your email address (if you already have a stathat account, use the one associated with it)</param>
+        /// <param name="ezkey">your ezkey (defaults to email address).  If you already have a stathat account, use the one associated with it.</param>
         /// <param name="stat">the name for your stat</param>
         /// <param name="count">the number to increment</param>
-        public static void EzCounter(string email, string stat, int count)
+        public static void EzCounter(string ezkey, string stat, int count)
         {
-            Post.EzCounter(email, stat, (float)count);
+            Post.EzCounter(ezkey, stat, (float)count);
         }
 
         /// <summary>
         /// Posts a counter increment to stathat over HTTP using ez API - the stat and/or you don't have to be pre-registered
         /// </summary>
-        /// <param name="email">your email address (if you already have a stathat account, use the one associated with it)</param>
+        /// <param name="ezkey">your ezkey (defaults to email address).  If you already have a stathat account, use the one associated with it.</param>
         /// <param name="stat">the name for your stat</param>
         /// <param name="count">the number</param>
-        public static void EzValue(string email, string stat, float value)
+        public static void EzValue(string ezkey, string stat, float value)
         {
             Dictionary<string, string> p = new Dictionary<string, string>();
-            p.Add("email", email);
+            p.Add("ezkey", ezkey);
             p.Add("stat", stat);
             p.Add("value", value.ToString());
             new FormPoster(Post.BaseUrl, "/ez", p);
@@ -156,12 +156,12 @@ namespace StatHat
         /// <summary>
         /// Posts a counter increment to stathat over HTTP using ez API - the stat and/or you don't have to be pre-registered
         /// </summary>
-        /// <param name="email">your email address (if you already have a stathat account, use the one associated with it)</param>
+        /// <param name="ezkey">your ezkey (defaults to email address).  If you already have a stathat account, use the one associated with it.</param>
         /// <param name="stat">the name for your stat</param>
         /// <param name="count">the number</param>
-        public static void EzValue(string email, string stat, int value)
+        public static void EzValue(string ezkey, string stat, int value)
         {
-            Post.EzValue(email, stat, (float) value);
+            Post.EzValue(ezkey, stat, (float) value);
         }
 
         /// <summary>
@@ -221,14 +221,14 @@ namespace StatHat
         /// <summary>
         /// Posts a counter increment to stathat over HTTP using ez API - the stat and/or you don't have to be pre-registered
         /// </summary>
-        /// <param name="email">your email address (if you already have a stathat account, use the one associated with it)</param>
+        /// <param name="ezkey">your ezkey (defaults to email address).  If you already have a stathat account, use the one associated with it.</param>
         /// <param name="stat">the name for your stat</param>
         /// <param name="count">the number to increment</param>
         /// <param name="replyDelegate">the function you'd like called with the reply from stathat's server</param>
-        public static void EzCounter(string email, string stat, float count, ReplyDelegate replyDelegate)
+        public static void EzCounter(string ezkey, string stat, float count, ReplyDelegate replyDelegate)
         {
             Dictionary<string, string> p = new Dictionary<string, string>();
-            p.Add("email", email);
+            p.Add("ezkey", ezkey);
             p.Add("stat", stat);
             p.Add("count", count.ToString());
             new FormPoster(Post.BaseUrl, "/ez", p, replyDelegate);
@@ -237,26 +237,26 @@ namespace StatHat
         /// <summary>
         /// Posts a counter increment to stathat over HTTP using ez API - the stat and/or you don't have to be pre-registered
         /// </summary>
-        /// <param name="email">your email address (if you already have a stathat account, use the one associated with it)</param>
+        /// <param name="ezkey">your ezkey (defaults to email address).  If you already have a stathat account, use the one associated with it.</param>
         /// <param name="stat">the name for your stat</param>
         /// <param name="count">the number to increment</param>
         /// <param name="replyDelegate">the function you'd like called with the reply from stathat's server</param>
-        public static void EzCounter(string email, string stat, int count, ReplyDelegate replyDelegate)
+        public static void EzCounter(string ezkey, string stat, int count, ReplyDelegate replyDelegate)
         {
-            Post.EzCounter(email, stat, (float)count, replyDelegate);
+            Post.EzCounter(ezkey, stat, (float)count, replyDelegate);
         }
 
         /// <summary>
         /// Posts a counter increment to stathat over HTTP using ez API - the stat and/or you don't have to be pre-registered
         /// </summary>
-        /// <param name="email">your email address (if you already have a stathat account, use the one associated with it)</param>
+        /// <param name="ezkey">your ezkey (defaults to email address).  If you already have a stathat account, use the one associated with it.</param>
         /// <param name="stat">the name for your stat</param>
         /// <param name="count">the number</param>
         /// <param name="replyDelegate">the function you'd like called with the reply from stathat's server</param>
-        public static void EzValue(string email, string stat, float value, ReplyDelegate replyDelegate)
+        public static void EzValue(string ezkey, string stat, float value, ReplyDelegate replyDelegate)
         {
             Dictionary<string, string> p = new Dictionary<string, string>();
-            p.Add("email", email);
+            p.Add("ezkey", ezkey);
             p.Add("stat", stat);
             p.Add("value", value.ToString());
             new FormPoster(Post.BaseUrl, "/ez", p, replyDelegate);
@@ -265,13 +265,13 @@ namespace StatHat
         /// <summary>
         /// Posts a counter increment to stathat over HTTP using ez API - the stat and/or you don't have to be pre-registered
         /// </summary>
-        /// <param name="email">your email address (if you already have a stathat account, use the one associated with it)</param>
+        /// <param name="ezkey">your ezkey (defaults to email address).  If you already have a stathat account, use the one associated with it.</param>
         /// <param name="stat">the name for your stat</param>
         /// <param name="count">the number</param>
         /// <param name="replyDelegate">the function you'd like called with the reply from stathat's server</param>
-        public static void EzValue(string email, string stat, int value, ReplyDelegate replyDelegate)
+        public static void EzValue(string ezkey, string stat, int value, ReplyDelegate replyDelegate)
         {
-            Post.EzValue(email, stat, (float)value, replyDelegate);
+            Post.EzValue(ezkey, stat, (float)value, replyDelegate);
         }
 
         private class FormPoster
@@ -323,13 +323,13 @@ namespace StatHat
                 streamWriter.Close();
                 this.Request.BeginGetResponse(this.ResponseCallback, this.Request);
             }
-            
+
             private string encodeUriComponent(string s)
             {
                 string res = s.Replace("&", "%26");
                 res = res.Replace(" ","%20");
                 return res;
-            } 
+            }
 
             private void ResponseCallback(IAsyncResult asyncResult)
             {

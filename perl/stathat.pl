@@ -19,12 +19,12 @@ sub stathat_value {
 };
 
 sub stathat_ez_count {
-        my ($email, $stat_name, $count) = @_;
-        return stathat_post('ez', [ email => $email, stat => $stat_name, count => $count ]);
+        my ($ezkey, $stat_name, $count) = @_;
+        return stathat_post('ez', [ ezkey => $ezkey, stat => $stat_name, count => $count ]);
 };
 
 sub stathat_ez_value {
-        my ($email, $stat_name, $value) = @_;
-        return stathat_post('ez', [ email => $email, stat => $stat_name, value => $value ]);
+        my ($ezkey, $stat_name, $value) = @_;
+        return stathat_post('ez', [ ezkey => $ezkey, stat => $stat_name, value => $value ]);
 };
 
