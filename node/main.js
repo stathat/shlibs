@@ -4,7 +4,7 @@
 //
 (function() {
 
-        var http = require('http');
+        var https = require('https');
 
         var StatHat = {
                 trackValue: function(user_key, stat_key, value, callback) {
@@ -30,6 +30,7 @@
 
                         var options = {
                                 hostname: 'api.stathat.com',
+                                port: 443,
                                 path: path,
                                 method: 'POST',
                                 headers: {
@@ -38,7 +39,7 @@
                                 }
                         };
 
-                        var request = http.request(options, function(res) {
+                        var request = https.request(options, function(res) {
                                 res.on('data', function(chunk) {
                                         callback(res.statusCode, chunk);
                                 });
