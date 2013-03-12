@@ -1,10 +1,10 @@
 {
   "name": "stathat",
   "description": "stathat.com API library",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "homepage": "http://www.stathat.com",
   "repository": {
-    "url": ""
+    "url": "github.com/stathat/shlibs/node"
   },
   "author": "Patrick Crosby <patrick@stathat.com>",
   "main": "./main",

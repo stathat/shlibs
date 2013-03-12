@@ -11,16 +11,32 @@
                         this._postRequest('/v', {key: stat_key, ukey: user_key, value: value}, callback);
                 },
 
+                trackValueWithTime: function(user_key, stat_key, value, timestamp, callback) {
+                        this._postRequest('/v', {key: stat_key, ukey: user_key, value: value, t: timestamp}, callback);
+                },
+
                 trackCount: function(user_key, stat_key, count, callback) {
                         this._postRequest('/c', {key: stat_key, ukey: user_key, count: count}, callback);
+                },
+
+                trackCountWithTime: function(user_key, stat_key, count, timestamp, callback) {
+                        this._postRequest('/c', {key: stat_key, ukey: user_key, count: count, t: timestamp}, callback);
                 },
 
                 trackEZValue: function(ezkey, stat_name, value, callback) {
                         this._postRequest('/ez', {ezkey: ezkey, stat: stat_name, value: value}, callback);
                 },
 
+                trackEZValueWithTime: function(ezkey, stat_name, value, timestamp, callback) {
+                        this._postRequest('/ez', {ezkey: ezkey, stat: stat_name, value: value, t: timestamp}, callback);
+                },
+
                 trackEZCount: function(ezkey, stat_name, count, callback) {
                         this._postRequest('/ez', {ezkey: ezkey, stat: stat_name, count: count}, callback);
+                },
+
+                trackEZCountWithTime: function(ezkey, stat_name, count, timestamp, callback) {
+                        this._postRequest('/ez', {ezkey: ezkey, stat: stat_name, count: count, t: timestamp}, callback);
                 },
 
                 _postRequest: function(path, params, callback) {
