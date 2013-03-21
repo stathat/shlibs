@@ -25,8 +25,7 @@
         ]).
 
 
-%-define(BASE_URL(X), "http://www.stathat.com/" ++ X).
--define(BASE_URL(X), "http://localhost:8080/" ++ X).
+-define(BASE_URL(X), "http://www.stathat.com/" ++ X).
 
 ez_count(Ezkey, Stat, Count) ->
         Url = build_url("ez", [{"ezkey", Ezkey}, {"stat", Stat}, {"count", ntoa(Count)}]),
