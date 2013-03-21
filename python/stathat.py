@@ -27,7 +27,7 @@ class StatHat:
                         args['t'] = timestamp
                 return self.http_post('/ez', args)
 
-        def ez_post_count(self, ezkey, stat_name, count):
+        def ez_post_count(self, ezkey, stat_name, count, timestamp=None):
                 args = {'ezkey': ezkey, 'stat': stat_name, 'count': count}
                 if timestamp is not None:
                         args['t'] = timestamp
