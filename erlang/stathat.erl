@@ -1,47 +1,125 @@
 %%
 %% @author Patrick Crosby <patrick@stathat.com>
-%% @version 0.1
-%% @doc Module for sending data to stathat.com stat tracking service.
+%% @author Sam Elliott <sam@lenary.co.uk>
+%% @version 0.2
+%% @doc Gen Server for sending data to stathat.com stat tracking service.
 %%
 %% <h4>Example:</h4>
 %% <pre><code>
-%% 1&gt; inets:start().
-%% 2&gt; {ok, RequestId} = stathat:ez_count("erlang@stathat.com", "messages sent - female to male", 1).
-%% 3&gt; receive {http, {RequestId, Result}} -> ok after 500 -> error end.
-%% 4&gt; {ok, RequestIdNext} = stathat:ez_value("erlang@stathat.com", "request time", 92.194).
-%% 5&gt; receive {http, {RequestIdNext, ResultNext}} -> ok after 500 -> error end.
+%% 1&gt; {ok, Pid} = stathat:start().
+%% 2&gt; stathat:ez_count("erlang@stathat.com", "messages sent", 1).
+%% ok.
+%% 3&gt; stathat:ez_value("erlang@stathat.com", "request time", 92.194).
+%% ok.
 %%
 
 -module(stathat).
 
 -author("Patrick Crosby <patrick@stathat.com>").
--version("0.1").
+-author("Sam Elliott <sam@lenary.co.uk").
+-version("0.2").
+
+-behaviour(gen_server).
 
 -export([
+                start/0,
+                start_link/0,
+                child_definition/0,
                 ez_count/3,
                 ez_value/3,
                 cl_count/3,
                 cl_value/3
         ]).
 
+-export([
+                init/1, 
+                handle_call/3, 
+                handle_cast/2, 
+                handle_info/2, 
+                terminate/2, 
+                code_change/3
+        ]).
 
--define(BASE_URL(X), "http://www.stathat.com/" ++ X).
+
+-define(SH_BASE_URL(X), "http://www.stathat.com/" ++ X).
+
+%% Public API
+
+start() ->
+    gen_server:start({local, ?MODULE}, ?MODULE, [], []).
+
+start_link() ->
+    gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
+
+% Use this to get a child definition for a supervisor
+child_definition() ->
+    {?MODULE, {stathat, start_link, []}, permanent, infinity, worker, [?MODULE]}.
 
 ez_count(Ezkey, Stat, Count) ->
-        Url = build_url("ez", [{"ezkey", Ezkey}, {"stat", Stat}, {"count", ntoa(Count)}]),
-        httpc:request(get, {?BASE_URL(Url), []}, [], [{sync, false}]).
+    gen_server:cast(?MODULE, {ez_count, Ezkey, Stat, Count}).
 
 ez_value(Ezkey, Stat, Value) ->
-        Url = build_url("ez", [{"ezkey", Ezkey}, {"stat", Stat}, {"value", ntoa(Value)}]),
-        httpc:request(get, {?BASE_URL(Url), []}, [], [{sync, false}]).
+    gen_server:cast(?MODULE, {ez_value, Ezkey, Stat, Value}).
 
 cl_count(UserKey, StatKey, Count) ->
-        Url = build_url("c", [{"ukey", UserKey}, {"key", StatKey}, {"count", ntoa(Count)}]),
-        httpc:request(get, {?BASE_URL(Url), []}, [], [{sync, false}]).
+    gen_server:cast(?MODULE, {cl_count, UserKey, StatKey, Count}).
 
 cl_value(UserKey, StatKey, Value) ->
-        Url = build_url("v", [{"ukey", UserKey}, {"key", StatKey}, {"value", ntoa(Value)}]),
-        httpc:request(get, {?BASE_URL(Url), []}, [], [{sync, false}]).
+    gen_server:cast(?MODULE, {cl_value, UserKey, StatKey, Value}).
+
+
+% gen_server callbacks
+
+init(_Args) ->
+    case inets:start() of
+        ok -> {ok, {}};
+        {error, already_started} -> {ok, {}};
+        {error, Err} -> {stop, {error_starting_inets, Err}}
+    end.
+
+handle_call(_Request, From, State) ->
+    {reply, {error, unknown_request}, State}.
+
+
+handle_cast({ez_count, Ezkey, Stat, Count}, State) ->
+    Url = build_url("ez", [{"ezkey", Ezkey}, {"stat", Stat}, {"count", ntoa(Count)}]),
+    httpc:request(get, {?SH_BASE_URL(Url), []}, [], [{sync, false}]),
+    {noreply, State};
+
+handle_cast({ez_value, Ezkey, Stat, Value}, State) ->
+    Url = build_url("ez", [{"ezkey", Ezkey}, {"stat", Stat}, {"value", ntoa(Value)}]),
+    httpc:request(get, {?SH_BASE_URL(Url), []}, [], [{sync, false}]),
+    {noreply, State};
+
+handle_cast({cl_count, UserKey, StatKey, Count}, State) ->
+    Url = build_url("c", [{"ukey", UserKey}, {"key", StatKey}, {"count", ntoa(Count)}]),
+    httpc:request(get, {?SH_BASE_URL(Url), []}, [], [{sync, false}]),
+    {noreply, State};
+
+handle_cast({cl_value, UserKey, StatKey, Value}, State) ->
+    Url = build_url("v", [{"ukey", UserKey}, {"key", StatKey}, {"value", ntoa(Value)}]),
+    httpc:request(get, {?SH_BASE_URL(Url), []}, [], [{sync, false}]),
+    {noreply, State};
+
+handle_cast(_Request, State) ->
+    {noreply, State}.
+
+handle_info({_RequestId, {error, _Reason}}, State) ->
+    % You could do something here, but I won't
+    {noreply, State};
+handle_info({_RequestId, _Result}, State) ->
+    % Again, you might do something here but I won't
+    {noreply, State};
+handle_info(_Request, State) ->
+    {noreply, State};
+
+terminate(_Reason, _State) ->
+    ok.
+
+code_change(_OldVsn, State, _Extra) ->
+    {ok, State}.
+
+% private methods
 
 ntoa(Num) when is_list(Num) ->
         Num;
