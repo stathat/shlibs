@@ -77,7 +77,7 @@ init(_Args) ->
         {error, Err} -> {stop, {error_starting_inets, Err}}
     end.
 
-handle_call(_Request, From, State) ->
+handle_call(_Request, _From, State) ->
     {reply, {error, unknown_request}, State}.
 
 
@@ -111,7 +111,7 @@ handle_info({_RequestId, _Result}, State) ->
     % Again, you might do something here but I won't
     {noreply, State};
 handle_info(_Request, State) ->
-    {noreply, State};
+    {noreply, State}.
 
 terminate(_Reason, _State) ->
     ok.
