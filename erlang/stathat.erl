@@ -104,10 +104,10 @@ handle_cast({cl_value, UserKey, StatKey, Value}, State) ->
 handle_cast(_Request, State) ->
   {noreply, State}.
 
-handle_info({_RequestId, {error, _Reason}}, State) ->
+handle_info({http, {_RequestId, {error, _Reason}}}, State) ->
   % You could do something here, but I won't
   {noreply, State};
-handle_info({_RequestId, _Result}, State) ->
+handle_info({http, {_RequestId, _Result}}, State) ->
   % Again, you might do something here but I won't
   {noreply, State};
 handle_info(_Request, State) ->
