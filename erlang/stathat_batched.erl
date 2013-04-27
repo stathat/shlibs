@@ -39,11 +39,13 @@
         ]).
 
 -record(sh_batched_state,
-        {ez_key   % User-specified (RO): String
+        {ezkey                    % User-specified (RO): Binary (converted from string)
         ,timer_ref                % Internal (RO): Timer Ref
         ,next_batch = []          % Internal (RW): Stats to send next
         ,in_flight  = dict:new()  % Internal (RW): Stats that have been sent that we're waiting for a HTTP Response for
         }).
+
+-define(SH_TIMEOUT_MESSAGE, sh_timeout).
 
 %%
 % Public API
@@ -75,8 +77,8 @@ ez_value(Stat, Value, Ts) ->
 % gen_server callbacks
 %%
 init([Ezkey, Timeout]) ->
-  {ok, TRef} = timer:send_interval(Timeout*1000, sh_timeout),
-  NewState = #sh_batched_state{ez_key=list_to_binary(Ezkey)
+  {ok, TRef} = timer:send_interval(Timeout*1000, ?SH_TIMEOUT_MESSAGE),
+  NewState = #sh_batched_state{ezkey=list_to_binary(Ezkey)
                               ,timer_ref=TRef},
   case inets:start() of
     ok -> {ok, NewState};
@@ -101,7 +103,7 @@ handle_cast(_Request, State) ->
   {noreply, State}.
 
 
-handle_info(sh_timeout, State) ->
+handle_info(?SH_TIMEOUT_MESSAGE, State) ->
   State1 = send_and_reset(State),
   {noreply, State1};
 
@@ -125,7 +127,7 @@ terminate(_Reason, State = #sh_batched_state{timer_ref = TRef, next_batch = Next
   timer:cancel(TRef),
 
   % Send any remaining statistics
-  send(State#sh_batched_state.ez_key, NextBatch),
+  send(State#sh_batched_state.ezkey, NextBatch),
 
   % We should do something with the in-flight keys, but I dunno what,
   % as we can't be sure whether they made it or not. :(
@@ -149,12 +151,11 @@ add_stat(State = #sh_batched_state{next_batch = Stats}, NewStat) ->
 
 % Sends the data to SH and resets State
 send_and_reset(State = #sh_batched_state{next_batch=[]}) ->
-  % Nothing to be sent, but update the last_batch_ts anyway,
-  % or the next stat we get will be sent on its own
+  % Nothing to be sent
   State;
-send_and_reset(State = #sh_batched_state{ez_key=EzKey, next_batch=NextBatch, in_flight=InFlight}) ->
+send_and_reset(State = #sh_batched_state{next_batch=NextBatch, in_flight=InFlight}) ->
   % Stuff to be sent. YAY
-  ReqId = send(EzKey, NextBatch),
+  ReqId = send(State#sh_batched_state.ezkey, NextBatch),
   InFlight1 = dict:store(ReqId, NextBatch, InFlight),
   State#sh_batched_state{next_batch=[], in_flight=InFlight1}.
 
@@ -178,6 +179,6 @@ send_failed(State = #sh_batched_state{in_flight = InFlight}, ReqId) ->
   % An Exponential backoff would be better, but is more complex to code
   {ok, FailedBatch} = dict:find(ReqId, InFlight),
   InFlight1 = dict:erase(ReqId, InFlight),
-  NewReqId = send(State#sh_batched_state.ez_key, FailedBatch),
+  NewReqId = send(State#sh_batched_state.ezkey, FailedBatch),
   InFlight2 = dict:store(NewReqId, FailedBatch, InFlight1),
   State#sh_batched_state{in_flight=InFlight2}.
