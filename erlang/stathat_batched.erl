@@ -39,10 +39,10 @@
         ]).
 
 -record(sh_batched_state,
-        {ezkey                    % User-specified (RO): Binary (converted from string)
-        ,timer_ref                % Internal (RO): Timer Ref
-        ,next_batch = []          % Internal (RW): Stats to send next
-        ,in_flight  = dict:new()  % Internal (RW): Stats that have been sent that we're waiting for a HTTP Response for
+        {ezkey      :: binary()     % User-specified (RO): EzKey to send each batch with
+        ,timer_ref  :: timer:tref() % Internal (RO): Timer Ref (so we send every <timeout> seconds)
+        ,next_batch = []            % Internal (RW): Stats to send next
+        ,in_flight  = dict:new()    % Internal (RW): Stats that have been sent that we're waiting for a HTTP Response for
         }).
 
 -define(SH_TIMEOUT_MESSAGE, sh_timeout).
@@ -51,25 +51,32 @@
 % Public API
 %%
 
+-spec start(string(), pos_integer()) -> term().
 start(Ezkey, Timeout) ->
   gen_server:start({local, ?MODULE}, ?MODULE, [Ezkey, Timeout], []).
 
+-spec start_link(string(), pos_integer()) -> term().
 start_link(Ezkey, Timeout) ->
   gen_server:start_link({local, ?MODULE}, ?MODULE, [Ezkey, Timeout], []).
 
 % Use this to get a child definition for a supervisor
+-spec child_definition(string(), pos_integer()) -> tuple().
 child_definition(Ezkey, Timeout) ->
   {?MODULE, {?MODULE, start_link, [Ezkey, Timeout]}, permanent, infinity, worker, [?MODULE]}.
 
+-spec ez_count(string(), integer()) -> ok.
 ez_count(Stat, Count) ->
   ez_count(Stat, Count, unix_ts()).
 
+-spec ez_count(string(), integer(), integer()) -> ok.
 ez_count(Stat, Count, Ts) ->
   gen_server:cast(?MODULE, {ez_count, Stat, Count, Ts}).
 
+-spec ez_value(string(), number()) -> ok.
 ez_value(Stat, Value) ->
   ez_value(Stat, Value, unix_ts()).
 
+-spec ez_value(string(), number(), integer()) -> ok.
 ez_value(Stat, Value, Ts) ->
   gen_server:cast(?MODULE, {ez_value, Stat, Value, Ts}).
 
@@ -77,7 +84,7 @@ ez_value(Stat, Value, Ts) ->
 % gen_server callbacks
 %%
 init([Ezkey, Timeout]) ->
-  {ok, TRef} = timer:send_interval(Timeout*1000, ?SH_TIMEOUT_MESSAGE),
+  {ok, TRef} = timer:send_interval(timer:seconds(Timeout), ?SH_TIMEOUT_MESSAGE),
   NewState = #sh_batched_state{ezkey=list_to_binary(Ezkey)
                               ,timer_ref=TRef},
   case inets:start() of
@@ -86,8 +93,10 @@ init([Ezkey, Timeout]) ->
     {error, Err} -> {stop, Err}
   end.
 
+
 handle_call(_Request, _From, State) ->
   {reply, {error, unknown_request}, State}.
+
 
 handle_cast({ez_count, Stat, Count, Ts}, State) ->
   EzCount = {struct, [{stat, list_to_binary(Stat)}, {count, Count}, {t, Ts}]},
@@ -122,6 +131,7 @@ handle_info({http, {RequestId, {{_HttpVersion, _Code, _Phrase}, _Headers, _Body}
 handle_info(_Request, State) ->
   {noreply, State}.
 
+
 terminate(_Reason, State = #sh_batched_state{timer_ref = TRef, next_batch = NextBatch}) ->
   % Cancel the Timer
   timer:cancel(TRef),
@@ -141,15 +151,18 @@ code_change(_OldVsn, State, _Extra) ->
 %%
 
 % Give a Unix Timestamp (seconds since 1 Jan 1970)
+-spec unix_ts() -> integer().
 unix_ts() ->
   {MegaSecs, Secs, _} = os:timestamp(),
   MegaSecs*1000000 + Secs.
 
 % Add another stat to the next batch to be sent
+-spec add_stat(#sh_batched_state{}, tuple()) -> #sh_batched_state{}.
 add_stat(State = #sh_batched_state{next_batch = Stats}, NewStat) ->
   State#sh_batched_state{next_batch = [NewStat|Stats]}.
 
 % Sends the data to SH and resets State
+-spec send_and_reset(#sh_batched_state{}) -> #sh_batched_state{}.
 send_and_reset(State = #sh_batched_state{next_batch=[]}) ->
   % Nothing to be sent
   State;
@@ -160,6 +173,7 @@ send_and_reset(State = #sh_batched_state{next_batch=NextBatch, in_flight=InFligh
   State#sh_batched_state{next_batch=[], in_flight=InFlight1}.
 
 % Sends the data to stathat.com. Returns a request id for future tracking
+-spec send(binary(), [tuple(),...]) -> reference().
 send(EzKey, NextBatch) ->
   JsonData = {struct, [{ezkey, EzKey}, {data, NextBatch}]},
   Json = mochijson2:encode(JsonData),
@@ -169,11 +183,13 @@ send(EzKey, NextBatch) ->
   ReqId.
 
 % Async callback for when a send has been successful
+-spec send_successful(#sh_batched_state{}, reference()) -> #sh_batched_state{}.
 send_successful(State = #sh_batched_state{in_flight = InFlight}, ReqId) ->
   InFlight1 = dict:erase(ReqId, InFlight),
   State#sh_batched_state{in_flight = InFlight1}.
 
 % Async callback for when a send has failed. Will retry
+-spec send_failed(#sh_batched_state{}, reference()) -> #sh_batched_state{}.
 send_failed(State = #sh_batched_state{in_flight = InFlight}, ReqId) ->
   % This will retry forever.
   % An Exponential backoff would be better, but is more complex to code
