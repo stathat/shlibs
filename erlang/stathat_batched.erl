@@ -3,7 +3,7 @@
 %% @version 0.1
 %% @doc Gen Server for sending data to stathat.com stat tracking service, in batches.
 %%
-%% Requires https://github.com/bjnortier/mochijson2
+%% Requires https://github.com/davisp/jiffy
 %%
 %% <h4>Example:</h4>
 %% <pre><code>
@@ -99,12 +99,12 @@ handle_call(_Request, _From, State) ->
 
 
 handle_cast({ez_count, Stat, Count, Ts}, State) ->
-  EzCount = {struct, [{stat, list_to_binary(Stat)}, {count, Count}, {t, Ts}]},
+  EzCount = {[{stat, list_to_binary(Stat)}, {count, Count}, {t, Ts}]},
   State1 = add_stat(State, EzCount),
   {noreply, State1};
 
 handle_cast({ez_value, Stat, Value, Ts}, State) ->
-  EzValue = {struct, [{stat, list_to_binary(Stat)}, {value, Value}, {t, Ts}]},
+  EzValue = {[{stat, list_to_binary(Stat)}, {value, Value}, {t, Ts}]},
   State1 = add_stat(State, EzValue),
   {noreply, State1};
 
@@ -175,11 +175,10 @@ send_and_reset(State = #sh_batched_state{next_batch=NextBatch, in_flight=InFligh
 % Sends the data to stathat.com. Returns a request id for future tracking
 -spec send(binary(), [tuple(),...]) -> reference().
 send(EzKey, NextBatch) ->
-  JsonData = {struct, [{ezkey, EzKey}, {data, NextBatch}]},
-  Json = mochijson2:encode(JsonData),
+  JsonData = {[{ezkey, EzKey}, {data, NextBatch}]},
+  Json = jiffy:encode(JsonData),
   Request = {"http://api.stathat.com/ez", [], "application/json", iolist_to_binary(Json)},
   {ok, ReqId} = httpc:request(post, Request, [], [{sync, false}]),
-  io:format("stathat: ~s ~p~n", [EzKey, NextBatch]),
   ReqId.
 
 % Async callback for when a send has been successful
