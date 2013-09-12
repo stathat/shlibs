@@ -12,7 +12,6 @@
 @interface StatHat : NSObject {
         NSURLConnection* _connection;
         NSMutableString* _body;
-        id<StatHatDelegate> _delegate;
 }
 
 @property (nonatomic, assign) id<StatHatDelegate> delegate;
