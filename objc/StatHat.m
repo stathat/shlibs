@@ -22,7 +22,7 @@
 
 + (StatHat*)postEZStat:(NSString*)statName withValue:(double)value forUser:(NSString*)ezkey delegate:(id<StatHatDelegate>)delegate
 {
-        StatHat* sh = [[[StatHat alloc] init] autorelease];
+        StatHat* sh = [[StatHat alloc] init];
         sh.delegate = delegate;
 
         [sh ezPostStat:statName withValue:value forUser:ezkey];
@@ -31,7 +31,7 @@
 
 + (StatHat*)postEZStat:(NSString*)statName withCount:(double)count forUser:(NSString*)ezkey delegate:(id<StatHatDelegate>)delegate
 {
-        StatHat* sh = [[[StatHat alloc] init] autorelease];
+        StatHat* sh = [[StatHat alloc] init];
         sh.delegate = delegate;
 
         [sh ezPostStat:statName withCount:count forUser:ezkey];
@@ -45,7 +45,7 @@
 
 + (StatHat*)postStatKey:(NSString*)statKey withValue:(double)value forUser:(NSString*)userKey delegate:(id<StatHatDelegate>)delegate
 {
-        StatHat* sh = [[[StatHat alloc] init] autorelease];
+        StatHat* sh = [[StatHat alloc] init];
         sh.delegate = delegate;
         [sh postStatKey:statKey withValue:value forUserKey:userKey];
         return sh;
@@ -53,7 +53,7 @@
 
 + (StatHat*)postStatKey:(NSString*)statKey withCount:(double)count forUser:(NSString*)userKey delegate:(id<StatHatDelegate>)delegate
 {
-        StatHat* sh = [[[StatHat alloc] init] autorelease];
+        StatHat* sh = [[StatHat alloc] init];
         sh.delegate = delegate;
 
         [sh postStatKey:statKey withCount:count forUserKey:userKey];
@@ -141,13 +141,6 @@
         [_delegate statHat:self postFinished:_body];
 }
 
-- (void)dealloc
-{
-        [_connection release];
-        [_body release];
-        [super dealloc];
-}
-
 @end
 
 //
@@ -170,7 +163,7 @@
 
         [request setHTTPMethod:@"POST"];
         [request setHTTPBody:[dataStr dataUsingEncoding:NSUTF8StringEncoding]];
-        _connection = [[NSURLConnection connectionWithRequest:request delegate:self] retain];
+        _connection = [NSURLConnection connectionWithRequest:request delegate:self];
 }
 
 
@@ -192,7 +185,6 @@
 
 - (void)releaseConnection
 {
-        [_connection release];
         _connection = nil;
 }
 
