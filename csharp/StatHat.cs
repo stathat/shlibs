@@ -3,6 +3,7 @@ using System.Net;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace StatHat
 {
@@ -71,7 +72,7 @@ namespace StatHat
             Dictionary<string, string> p = new Dictionary<string,string>();
             p.Add("key", key);
             p.Add("ukey", ukey);
-            p.Add("count", count.ToString());
+            p.Add("count", count.ToString(CultureInfo.InvariantCulture));
             new FormPoster(Post.BaseUrl, "/c", p);
         }
 
@@ -98,7 +99,7 @@ namespace StatHat
             Dictionary<string, string> p = new Dictionary<string, string>();
             p.Add("key", key);
             p.Add("ukey", ukey);
-            p.Add("value", value.ToString());
+            p.Add("value", value.ToString(CultureInfo.InvariantCulture));
             new FormPoster(Post.BaseUrl, "/v", p);
         }
         /// <summary>
@@ -123,7 +124,7 @@ namespace StatHat
             Dictionary<string, string> p = new Dictionary<string, string>();
             p.Add("ezkey", ezkey);
             p.Add("stat", stat);
-            p.Add("count", count.ToString());
+            p.Add("count", count.ToString(CultureInfo.InvariantCulture));
             new FormPoster(Post.BaseUrl, "/ez", p);
         }
 
@@ -149,7 +150,7 @@ namespace StatHat
             Dictionary<string, string> p = new Dictionary<string, string>();
             p.Add("ezkey", ezkey);
             p.Add("stat", stat);
-            p.Add("value", value.ToString());
+            p.Add("value", value.ToString(CultureInfo.InvariantCulture));
             new FormPoster(Post.BaseUrl, "/ez", p);
         }
 
@@ -176,7 +177,7 @@ namespace StatHat
             Dictionary<string, string> p = new Dictionary<string, string>();
             p.Add("key", key);
             p.Add("ukey", ukey);
-            p.Add("count", count.ToString());
+            p.Add("count", count.ToString(CultureInfo.InvariantCulture));
             new FormPoster(Post.BaseUrl, "/c", p, replyDelegate);
         }
         /// <summary>
@@ -203,7 +204,7 @@ namespace StatHat
             Dictionary<string, string> p = new Dictionary<string, string>();
             p.Add("key", key);
             p.Add("ukey", ukey);
-            p.Add("value", value.ToString());
+            p.Add("value", value.ToString(CultureInfo.InvariantCulture));
             new FormPoster(Post.BaseUrl, "/v", p, replyDelegate);
         }
         /// <summary>
@@ -230,7 +231,7 @@ namespace StatHat
             Dictionary<string, string> p = new Dictionary<string, string>();
             p.Add("ezkey", ezkey);
             p.Add("stat", stat);
-            p.Add("count", count.ToString());
+            p.Add("count", count.ToString(CultureInfo.InvariantCulture));
             new FormPoster(Post.BaseUrl, "/ez", p, replyDelegate);
         }
 
@@ -258,7 +259,7 @@ namespace StatHat
             Dictionary<string, string> p = new Dictionary<string, string>();
             p.Add("ezkey", ezkey);
             p.Add("stat", stat);
-            p.Add("value", value.ToString());
+            p.Add("value", value.ToString(CultureInfo.InvariantCulture));
             new FormPoster(Post.BaseUrl, "/ez", p, replyDelegate);
         }
 
