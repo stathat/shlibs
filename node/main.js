@@ -1,12 +1,14 @@
-// Copyright 2011 Numerotron, Inc. / Patrick Crosby
+// Copyright 2011-2014 Numerotron, Inc. / Patrick Crosby
 //
 // StatHat API node.js module
 //
 (function() {
 
         var http = require('http');
+        var https = require('https');
 
         var StatHat = {
+                useHTTPS: false,
                 trackValue: function(user_key, stat_key, value, callback) {
                         this._postRequest('/v', {key: stat_key, ukey: user_key, value: value}, callback);
                 },
@@ -54,7 +56,8 @@
                                 }
                         };
 
-                        var request = http.request(options, function(res) {
+                        var hmod = this.useHTTPS ? https : http;
+                        var request = hmod.request(options, function(res) {
                                 res.on('data', function(chunk) {
                                         callback(res.statusCode, chunk);
                                 });
@@ -62,7 +65,6 @@
 
                         request.on('error', function(e) {
                                 if (!e) e = {};
-                                //console.error("StatHat HTTP error: "+e.message);
                                 callback(600,e.message);
                         });
 

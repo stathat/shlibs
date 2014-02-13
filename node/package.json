@@ -1,7 +1,7 @@
 {
   "name": "stathat",
   "description": "stathat.com API library",
-  "version": "0.0.5",
+  "version": "0.0.8",
   "homepage": "http://www.stathat.com",
   "repository": {
     "url": "github.com/stathat/shlibs/node"
