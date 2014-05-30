@@ -311,17 +311,24 @@ namespace StatHat
             }
             private void RequestCallback(IAsyncResult asyncResult)
             {
-
-                string postData = "";
-                foreach (string key in this.Parameters.Keys)
+                try
                 {
-                    postData += encodeUriComponent(key) + "=" + encodeUriComponent(this.Parameters[key]) + "&";
+                    string postData = "";
+                    foreach (string key in this.Parameters.Keys)
+                    {
+                        postData += encodeUriComponent(key) + "=" + encodeUriComponent(this.Parameters[key]) + "&";
+                    }
+                    Stream newStream = Request.EndGetRequestStream(asyncResult);
+                    StreamWriter streamWriter = new StreamWriter(newStream);
+                    streamWriter.Write(postData);
+                    streamWriter.Close();
+                    this.Request.BeginGetResponse(this.ResponseCallback, this.Request);
                 }
-                Stream newStream = Request.EndGetRequestStream(asyncResult);
-                StreamWriter streamWriter = new StreamWriter(newStream);
-                streamWriter.Write(postData);
-                streamWriter.Close();
-                this.Request.BeginGetResponse(this.ResponseCallback, this.Request);
+                catch (Exception e)
+                {
+                    this.Reply(e.Message);
+                }
+                finally { }
             }
 
             private string encodeUriComponent(string s)
