@@ -116,7 +116,7 @@
                 return;
         }
 
-        [_body appendString:[NSString stringWithUTF8String:[data bytes]]];
+  [_body appendString:[[NSString alloc] initWithBytes:[data bytes] length:[data length] encoding:NSUTF8StringEncoding]];
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
