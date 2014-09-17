@@ -73,7 +73,7 @@
                 return nil;
         }
 
-        _body = [[NSMutableString alloc] init];
+        _body = [NSMutableData dataWithCapacity:0];
 
         return self;
 }
@@ -116,7 +116,7 @@
                 return;
         }
 
-        [_body appendString:[NSString stringWithUTF8String:[data bytes]]];
+        [_body appendData:data];
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
@@ -138,7 +138,7 @@
 
         [self releaseConnection];
 
-        [_delegate statHat:self postFinished:_body];
+        [_delegate statHat:self postFinished:[NSString stringWithUTF8String:[_body bytes]]];
 }
 
 @end
