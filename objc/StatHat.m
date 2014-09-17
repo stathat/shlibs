@@ -126,7 +126,7 @@
         }
 
         [self releaseConnection];
-
+        _body = nil;
         [_delegate statHat:self postError:error];
 }
 
@@ -138,7 +138,12 @@
 
         [self releaseConnection];
 
-        [_delegate statHat:self postFinished:[NSString stringWithUTF8String:[_body bytes]]];
+        NSString* res = @"";
+        if ([_body length] > 0) {
+                res = [NSString stringWithUTF8String:[_body bytes]];
+        }
+        [_delegate statHat:self postFinished:res];
+        _body = nil;
 }
 
 @end
