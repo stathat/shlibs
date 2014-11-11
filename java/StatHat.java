@@ -46,7 +46,7 @@ class StatHat {
                         String data = URLEncoder.encode("ukey", "UTF-8") + "=" + URLEncoder.encode(userKey, "UTF-8");
                         data += "&" + URLEncoder.encode("key", "UTF-8") + "=" + URLEncoder.encode(statKey, "UTF-8");
                         data += "&" + URLEncoder.encode("count", "UTF-8") + "=" + URLEncoder.encode(count.toString(), "UTF-8");
-                        httpPost("http://api.stathat.com/v", data);
+                        httpPost("http://api.stathat.com/c", data);
                 }
                 catch (Exception e) {
                         System.err.println("postCount exception:  " + e);
