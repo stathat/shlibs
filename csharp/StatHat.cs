@@ -72,6 +72,7 @@ namespace StatHat
             p.Add("key", key);
             p.Add("ukey", ukey);
             p.Add("count", count.ToString());
+	    p.Add("vb", "1");
             new FormPoster(Post.BaseUrl, "/c", p);
         }
 
@@ -99,6 +100,7 @@ namespace StatHat
             p.Add("key", key);
             p.Add("ukey", ukey);
             p.Add("value", value.ToString());
+	    p.Add("vb", "1");
             new FormPoster(Post.BaseUrl, "/v", p);
         }
         /// <summary>
@@ -124,6 +126,7 @@ namespace StatHat
             p.Add("ezkey", ezkey);
             p.Add("stat", stat);
             p.Add("count", count.ToString());
+	    p.Add("vb", "1");
             new FormPoster(Post.BaseUrl, "/ez", p);
         }
 
@@ -150,6 +153,7 @@ namespace StatHat
             p.Add("ezkey", ezkey);
             p.Add("stat", stat);
             p.Add("value", value.ToString());
+	    p.Add("vb", "1");
             new FormPoster(Post.BaseUrl, "/ez", p);
         }
 
@@ -177,6 +181,7 @@ namespace StatHat
             p.Add("key", key);
             p.Add("ukey", ukey);
             p.Add("count", count.ToString());
+	    p.Add("vb", "1");
             new FormPoster(Post.BaseUrl, "/c", p, replyDelegate);
         }
         /// <summary>
@@ -204,6 +209,7 @@ namespace StatHat
             p.Add("key", key);
             p.Add("ukey", ukey);
             p.Add("value", value.ToString());
+	    p.Add("vb", "1");
             new FormPoster(Post.BaseUrl, "/v", p, replyDelegate);
         }
         /// <summary>
@@ -231,6 +237,7 @@ namespace StatHat
             p.Add("ezkey", ezkey);
             p.Add("stat", stat);
             p.Add("count", count.ToString());
+	    p.Add("vb", "1");
             new FormPoster(Post.BaseUrl, "/ez", p, replyDelegate);
         }
 
@@ -259,6 +266,7 @@ namespace StatHat
             p.Add("ezkey", ezkey);
             p.Add("stat", stat);
             p.Add("value", value.ToString());
+	    p.Add("vb", "1");
             new FormPoster(Post.BaseUrl, "/ez", p, replyDelegate);
         }
 
