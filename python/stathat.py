@@ -1,12 +1,13 @@
-import urllib
-import urllib2
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
 
 class StatHat:
 
         def http_post(self, path, data):
-                pdata = urllib.urlencode(data)
-                req = urllib2.Request('http://api.stathat.com' + path, pdata)
-                resp = urllib2.urlopen(req)
+                pdata = urlencode(data)
+                pdata = pdata.encode('ascii')
+                req = Request('http://api.stathat.com' + path, pdata)
+                resp = urlopen(req)
                 return resp.read()
 
         def post_value(self, user_key, stat_key, value, timestamp=None):
