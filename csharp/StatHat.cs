@@ -1,8 +1,7 @@
-﻿using System;
-using System.Net;
-using System.IO;
-using System.Text;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
 
 namespace StatHat
 {
@@ -11,7 +10,6 @@ namespace StatHat
 
     public static class Post
     {
-
         // ===================
         // How to use StatHat:
         // ===================
@@ -68,14 +66,15 @@ namespace StatHat
         /// <param name="count">the number to increment</param>
         public static void Counter(string key, string ukey, float count)
         {
-            Dictionary<string, string> p = new Dictionary<string,string>();
-            p.Add("key", key);
-            p.Add("ukey", ukey);
-            p.Add("count", count.ToString());
-	    p.Add("vb", "1");
+            var p = new Dictionary<string, string>
+            {
+                { "key", key },
+                { "ukey", ukey },
+                { "count", count.ToString() },
+                { "vb", "1" }
+            };
             new FormPoster(Post.BaseUrl, "/c", p);
         }
-
 
         /// <summary>
         /// Posts a counter increment to stathat over HTTP
@@ -86,32 +85,37 @@ namespace StatHat
         public static void Counter(string key, string ukey, int count)
         {
             Post.Counter(key, ukey, (float)count);
+        }
 
-        }
         /// <summary>
-        /// Posts a value to stathat over HTTP
+        /// Posts a counter increment to stathat over HTTP
         /// </summary>
         /// <param name="key">the stat's posting key</param>
         /// <param name="ukey">your user key</param>
-        /// <param name="value">the number</param>
-        public static void Value(string key, string ukey, float value)
+        /// <param name="count">the number to increment</param>
+        /// <param name="replyDelegate">the function you'd like called with the reply from stathat's server</param>
+        public static void Counter(string key, string ukey, float count, ReplyDelegate replyDelegate)
         {
-            Dictionary<string, string> p = new Dictionary<string, string>();
-            p.Add("key", key);
-            p.Add("ukey", ukey);
-            p.Add("value", value.ToString());
-	    p.Add("vb", "1");
-            new FormPoster(Post.BaseUrl, "/v", p);
+            var p = new Dictionary<string, string>
+            {
+                { "key", key },
+                { "ukey", ukey },
+                { "count", count.ToString() },
+                { "vb", "1" }
+            };
+            new FormPoster(Post.BaseUrl, "/c", p, replyDelegate);
         }
+
         /// <summary>
-        /// Posts a value to stathat over HTTP
+        /// Posts a counter increment to stathat over HTTP
         /// </summary>
         /// <param name="key">the stat's posting key</param>
         /// <param name="ukey">your user key</param>
-        /// <param name="value">the number</param>
-        public static void Value(string key, string ukey, int value)
+        /// <param name="count">the number to increment</param>
+        /// <param name="replyDelegate">the function you'd like called with the reply from stathat's server</param>
+        public static void Counter(string key, string ukey, int count, ReplyDelegate replyDelegate)
         {
-            Post.Value(key, ukey, (float)value);
+            Post.Counter(key, ukey, (float)count, replyDelegate);
         }
 
         /// <summary>
@@ -122,11 +126,13 @@ namespace StatHat
         /// <param name="count">the number to increment</param>
         public static void EzCounter(string ezkey, string stat, float count)
         {
-            Dictionary<string, string> p = new Dictionary<string, string>();
-            p.Add("ezkey", ezkey);
-            p.Add("stat", stat);
-            p.Add("count", count.ToString());
-	    p.Add("vb", "1");
+            var p = new Dictionary<string, string>
+            {
+                { "ezkey", ezkey },
+                { "stat", stat },
+                { "count", count.ToString() },
+                { "vb", "1" }
+            };
             new FormPoster(Post.BaseUrl, "/ez", p);
         }
 
@@ -146,98 +152,17 @@ namespace StatHat
         /// </summary>
         /// <param name="ezkey">your ezkey (defaults to email address).  If you already have a stathat account, use the one associated with it.</param>
         /// <param name="stat">the name for your stat</param>
-        /// <param name="count">the number</param>
-        public static void EzValue(string ezkey, string stat, float value)
-        {
-            Dictionary<string, string> p = new Dictionary<string, string>();
-            p.Add("ezkey", ezkey);
-            p.Add("stat", stat);
-            p.Add("value", value.ToString());
-	    p.Add("vb", "1");
-            new FormPoster(Post.BaseUrl, "/ez", p);
-        }
-
-        /// <summary>
-        /// Posts a counter increment to stathat over HTTP using ez API - the stat and/or you don't have to be pre-registered
-        /// </summary>
-        /// <param name="ezkey">your ezkey (defaults to email address).  If you already have a stathat account, use the one associated with it.</param>
-        /// <param name="stat">the name for your stat</param>
-        /// <param name="count">the number</param>
-        public static void EzValue(string ezkey, string stat, int value)
-        {
-            Post.EzValue(ezkey, stat, (float) value);
-        }
-
-        /// <summary>
-        /// Posts a counter increment to stathat over HTTP
-        /// </summary>
-        /// <param name="key">the stat's posting key</param>
-        /// <param name="ukey">your user key</param>
-        /// <param name="count">the number to increment</param>
-        /// <param name="replyDelegate">the function you'd like called with the reply from stathat's server</param>
-        public static void Counter(string key, string ukey, float count, ReplyDelegate replyDelegate)
-        {
-            Dictionary<string, string> p = new Dictionary<string, string>();
-            p.Add("key", key);
-            p.Add("ukey", ukey);
-            p.Add("count", count.ToString());
-	    p.Add("vb", "1");
-            new FormPoster(Post.BaseUrl, "/c", p, replyDelegate);
-        }
-        /// <summary>
-        /// Posts a counter increment to stathat over HTTP
-        /// </summary>
-        /// <param name="key">the stat's posting key</param>
-        /// <param name="ukey">your user key</param>
-        /// <param name="count">the number to increment</param>
-        /// <param name="replyDelegate">the function you'd like called with the reply from stathat's server</param>
-        public static void Counter(string key, string ukey, int count, ReplyDelegate replyDelegate)
-        {
-            Post.Counter(key, ukey, (float)count, replyDelegate);
-
-        }
-        /// <summary>
-        /// Posts a value to stathat over HTTP
-        /// </summary>
-        /// <param name="key">the stat's posting key</param>
-        /// <param name="ukey">your user key</param>
-        /// <param name="value">the number</param>
-        /// <param name="replyDelegate">the function you'd like called with the reply from stathat's server</param>
-        public static void Value(string key, string ukey, float value, ReplyDelegate replyDelegate)
-        {
-            Dictionary<string, string> p = new Dictionary<string, string>();
-            p.Add("key", key);
-            p.Add("ukey", ukey);
-            p.Add("value", value.ToString());
-	    p.Add("vb", "1");
-            new FormPoster(Post.BaseUrl, "/v", p, replyDelegate);
-        }
-        /// <summary>
-        /// Posts a value to stathat over HTTP
-        /// </summary>
-        /// <param name="key">the stat's posting key</param>
-        /// <param name="ukey">your user key</param>
-        /// <param name="value">the number</param>
-        /// <param name="replyDelegate">the function you'd like called with the reply from stathat's server</param>
-        public static void Value(string key, string ukey, int value, ReplyDelegate replyDelegate)
-        {
-            Post.Value(key, ukey, (float)value, replyDelegate);
-        }
-
-        /// <summary>
-        /// Posts a counter increment to stathat over HTTP using ez API - the stat and/or you don't have to be pre-registered
-        /// </summary>
-        /// <param name="ezkey">your ezkey (defaults to email address).  If you already have a stathat account, use the one associated with it.</param>
-        /// <param name="stat">the name for your stat</param>
         /// <param name="count">the number to increment</param>
         /// <param name="replyDelegate">the function you'd like called with the reply from stathat's server</param>
         public static void EzCounter(string ezkey, string stat, float count, ReplyDelegate replyDelegate)
         {
-            Dictionary<string, string> p = new Dictionary<string, string>();
-            p.Add("ezkey", ezkey);
-            p.Add("stat", stat);
-            p.Add("count", count.ToString());
-	    p.Add("vb", "1");
+            var p = new Dictionary<string, string>
+            {
+                { "ezkey", ezkey },
+                { "stat", stat },
+                { "count", count.ToString() },
+                { "vb", "1" }
+            };
             new FormPoster(Post.BaseUrl, "/ez", p, replyDelegate);
         }
 
@@ -259,14 +184,45 @@ namespace StatHat
         /// <param name="ezkey">your ezkey (defaults to email address).  If you already have a stathat account, use the one associated with it.</param>
         /// <param name="stat">the name for your stat</param>
         /// <param name="count">the number</param>
+        public static void EzValue(string ezkey, string stat, float value)
+        {
+            var p = new Dictionary<string, string>
+            {
+                { "ezkey", ezkey },
+                { "stat", stat },
+                { "value", value.ToString() },
+                { "vb", "1" }
+            };
+            new FormPoster(Post.BaseUrl, "/ez", p);
+        }
+
+        /// <summary>
+        /// Posts a counter increment to stathat over HTTP using ez API - the stat and/or you don't have to be pre-registered
+        /// </summary>
+        /// <param name="ezkey">your ezkey (defaults to email address).  If you already have a stathat account, use the one associated with it.</param>
+        /// <param name="stat">the name for your stat</param>
+        /// <param name="count">the number</param>
+        public static void EzValue(string ezkey, string stat, int value)
+        {
+            Post.EzValue(ezkey, stat, (float)value);
+        }
+
+        /// <summary>
+        /// Posts a counter increment to stathat over HTTP using ez API - the stat and/or you don't have to be pre-registered
+        /// </summary>
+        /// <param name="ezkey">your ezkey (defaults to email address).  If you already have a stathat account, use the one associated with it.</param>
+        /// <param name="stat">the name for your stat</param>
+        /// <param name="count">the number</param>
         /// <param name="replyDelegate">the function you'd like called with the reply from stathat's server</param>
         public static void EzValue(string ezkey, string stat, float value, ReplyDelegate replyDelegate)
         {
-            Dictionary<string, string> p = new Dictionary<string, string>();
-            p.Add("ezkey", ezkey);
-            p.Add("stat", stat);
-            p.Add("value", value.ToString());
-	    p.Add("vb", "1");
+            var p = new Dictionary<string, string>
+            {
+                { "ezkey", ezkey },
+                { "stat", stat },
+                { "value", value.ToString() },
+                { "vb", "1" }
+            };
             new FormPoster(Post.BaseUrl, "/ez", p, replyDelegate);
         }
 
@@ -282,83 +238,148 @@ namespace StatHat
             Post.EzValue(ezkey, stat, (float)value, replyDelegate);
         }
 
+        /// <summary>
+        /// Posts a value to stathat over HTTP
+        /// </summary>
+        /// <param name="key">the stat's posting key</param>
+        /// <param name="ukey">your user key</param>
+        /// <param name="value">the number</param>
+        public static void Value(string key, string ukey, float value)
+        {
+            var p = new Dictionary<string, string>
+            {
+                { "key", key },
+                { "ukey", ukey },
+                { "value", value.ToString() },
+                { "vb", "1" }
+            };
+            new FormPoster(Post.BaseUrl, "/v", p);
+        }
+
+        /// <summary>
+        /// Posts a value to stathat over HTTP
+        /// </summary>
+        /// <param name="key">the stat's posting key</param>
+        /// <param name="ukey">your user key</param>
+        /// <param name="value">the number</param>
+        public static void Value(string key, string ukey, int value)
+        {
+            Post.Value(key, ukey, (float)value);
+        }
+
+        /// <summary>
+        /// Posts a value to stathat over HTTP
+        /// </summary>
+        /// <param name="key">the stat's posting key</param>
+        /// <param name="ukey">your user key</param>
+        /// <param name="value">the number</param>
+        /// <param name="replyDelegate">the function you'd like called with the reply from stathat's server</param>
+        public static void Value(string key, string ukey, float value, ReplyDelegate replyDelegate)
+        {
+            var p = new Dictionary<string, string>
+            {
+                { "key", key },
+                { "ukey", ukey },
+                { "value", value.ToString() },
+                { "vb", "1" }
+            };
+            new FormPoster(Post.BaseUrl, "/v", p, replyDelegate);
+        }
+
+        /// <summary>
+        /// Posts a value to stathat over HTTP
+        /// </summary>
+        /// <param name="key">the stat's posting key</param>
+        /// <param name="ukey">your user key</param>
+        /// <param name="value">the number</param>
+        /// <param name="replyDelegate">the function you'd like called with the reply from stathat's server</param>
+        public static void Value(string key, string ukey, int value, ReplyDelegate replyDelegate)
+        {
+            Post.Value(key, ukey, (float)value, replyDelegate);
+        }
+
         private class FormPoster
         {
-            // Members
-            HttpWebRequest Request;
-            Dictionary<string, string> Parameters;
-            ReplyDelegate Reply;
-            string RelUrl;
-            string BaseUrl;
+            private readonly string _baseUrl;
 
+            private readonly Dictionary<string, string> _parameters;
+
+            private readonly string _relUrl;
+
+            private readonly ReplyDelegate _reply;
+
+            // Members
+            private HttpWebRequest _request;
 
             // Methods
             public FormPoster(string base_url, string rel_url, Dictionary<string, string> parameters, ReplyDelegate replyDelegate)
             {
-                this.BaseUrl = base_url;
-                this.Parameters = parameters;
-                this.Reply = replyDelegate;
-                this.RelUrl = rel_url;
-                this.PostForm();
+                _baseUrl = base_url;
+                _parameters = parameters;
+                _reply = replyDelegate;
+                _relUrl = rel_url;
+                PostForm();
             }
+
             public FormPoster(string base_url, string rel_url, Dictionary<string, string> parameters)
             {
-                this.BaseUrl = base_url;
-                this.Parameters = parameters;
-                this.Reply = new ReplyDelegate((rep) => { });
-                this.RelUrl = rel_url;
-                this.PostForm();
+                _baseUrl = base_url;
+                _parameters = parameters;
+                _reply = new ReplyDelegate((rep) => { });
+                _relUrl = rel_url;
+                PostForm();
+            }
+
+            private string EncodeUriComponent(string s)
+            {
+                var res = s.Replace("&", "%26");
+                res = res.Replace(" ", "%20");
+                return res;
             }
 
             private void PostForm()
             {
-                this.Request = (HttpWebRequest)WebRequest.Create(this.BaseUrl + this.RelUrl);
-                Request.Method = "POST";
-                Request.ContentType = "application/x-www-form-urlencoded";
-                Request.BeginGetRequestStream(this.RequestCallback, Request);
+                _request = (HttpWebRequest)WebRequest.Create(_baseUrl + _relUrl);
+                _request.Method = "POST";
+                _request.ContentType = "application/x-www-form-urlencoded";
+                _request.BeginGetRequestStream(RequestCallback, _request);
             }
+
             private void RequestCallback(IAsyncResult asyncResult)
             {
                 try
                 {
-                    string postData = "";
-                    foreach (string key in this.Parameters.Keys)
+                    var postData = "";
+                    foreach (var key in _parameters.Keys)
                     {
-                        postData += encodeUriComponent(key) + "=" + encodeUriComponent(this.Parameters[key]) + "&";
+                        postData += EncodeUriComponent(key) + "=" + EncodeUriComponent(_parameters[key]) + "&";
                     }
-                    Stream newStream = Request.EndGetRequestStream(asyncResult);
-                    StreamWriter streamWriter = new StreamWriter(newStream);
+                    var newStream = _request.EndGetRequestStream(asyncResult);
+                    var streamWriter = new StreamWriter(newStream);
                     streamWriter.Write(postData);
                     streamWriter.Close();
-                    this.Request.BeginGetResponse(this.ResponseCallback, this.Request);
+                    _request.BeginGetResponse(ResponseCallback, _request);
                 }
                 catch (Exception e)
                 {
-                    this.Reply(e.Message);
+                    _reply(e.Message);
                 }
                 finally { }
-            }
-
-            private string encodeUriComponent(string s)
-            {
-                string res = s.Replace("&", "%26");
-                res = res.Replace(" ","%20");
-                return res;
             }
 
             private void ResponseCallback(IAsyncResult asyncResult)
             {
                 try
                 {
-                    WebResponse response = this.Request.EndGetResponse(asyncResult);
-                    Stream dataStream = response.GetResponseStream();
-                    StreamReader reader = new StreamReader(dataStream);
-                    string result = reader.ReadToEnd();
-                    this.Reply(result);
+                    var response = _request.EndGetResponse(asyncResult);
+                    var dataStream = response.GetResponseStream();
+                    var reader = new StreamReader(dataStream);
+                    var result = reader.ReadToEnd();
+                    _reply(result);
                 }
                 catch (Exception e)
                 {
-                    this.Reply(e.Message);
+                    _reply(e.Message);
                 }
                 finally { }
             }
